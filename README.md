@@ -1,6 +1,6 @@
 # MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning
 
-This is the implementation of **Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning** (MOST) model.
+This is the implementation of **Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning** (MOST) model which was accepted at UAI 2021.
 
 ## Setup
 
