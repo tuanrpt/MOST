@@ -9,7 +9,6 @@ import tensorflow as tf
 from tensorflow.contrib.framework import arg_scope
 from tensorflow.contrib.framework import add_arg_scope
 from tensorbayes.layers import dense, conv2d, batch_norm, instance_norm
-# from tensorflow.python.ops.nn_impl import sigmoid_cross_entropy_with_logits as sigmoid_x_entropy
 from tensorbayes.tfutils import softmax_cross_entropy_with_two_logits as softmax_x_entropy_two
 from keras import backend as K
 from generic_utils import random_seed
@@ -485,7 +484,6 @@ class MOST():
         ]
         self.phase1_loss = tf.constant(0.0)
         for trade_off, loss in lst_phase1_losses:
-            # if trade_off != 0:
             self.phase1_loss += trade_off * loss
 
         lst_phase2_losses = [
@@ -498,7 +496,6 @@ class MOST():
         ]
         self.phase2_loss = tf.constant(0.0)
         for trade_off, loss in lst_phase2_losses:
-            # if trade_off != 0:
             self.phase2_loss += trade_off * loss
         # </editor-fold>
 
@@ -591,8 +588,8 @@ class MOST():
             feed_data[self.y_src_domain] = feed_y_src_domain
             feed_data[self.is_training] = True
 
-            if it < self.phase1_iters:  # train phase 1
-                _, primary_loss, W_dist, src_loss_class_sum, src_loss_class_lst, src_loss_discriminator, src_acc_lst, trg_acc, src_domain_acc, mimic_loss = \
+            if it < self.phase1_iters:
+                _, total_loss, W_dist, src_loss_class_sum, src_loss_class_lst, src_loss_discriminator, src_acc_lst, trg_acc, src_domain_acc, mimic_loss = \
                     self.tf_session.run(
                         [self.train_teacher, self.phase1_loss, self.OT_loss, self.src_loss_class_sum,
                          self.src_loss_class_lst, self.src_loss_discriminator,
@@ -600,7 +597,7 @@ class MOST():
                          self.mimic_loss],
                         feed_dict=feed_data
                     )
-            else:  # train phase 2
+            else:
                 for i in range(0, 5):
                     g_idx_trg_samples = np.random.permutation(num_trg_samples)[:self.batch_size]
                     g_feed_data = dict()
@@ -618,7 +615,7 @@ class MOST():
                             [self.secondary_train_student_op, self.OT_loss],
                             feed_dict=g_feed_data
                         )
-                _, primary_loss, src_loss_class_sum, src_loss_class_lst, src_loss_discriminator, src_acc_lst, trg_acc, src_domain_acc, mimic_loss = \
+                _, total_loss, src_loss_class_sum, src_loss_class_lst, src_loss_discriminator, src_acc_lst, trg_acc, src_domain_acc, mimic_loss = \
                     self.tf_session.run(
                         [self.primary_train_student_op, self.phase2_loss, self.src_loss_class_sum,
                          self.src_loss_class_lst, self.src_loss_discriminator,
@@ -629,8 +626,8 @@ class MOST():
 
             if it == 0 or (it + 1) % self.summary_freq == 0:
                 print(
-                    "iter %d/%d primary_loss %.3f; src_loss_class_sum %.3f; W_dist %.3f; \n src_loss_discriminator %.3f, pseudo_lbl_loss %.3f" % (
-                        it + 1, self.num_iters, primary_loss, src_loss_class_sum, W_dist,
+                    "iter %d/%d total_loss %.3f; src_loss_class_sum %.3f; W_dist %.3f; \n src_loss_discriminator %.3f, pseudo_lbl_loss %.3f" % (
+                        it + 1, self.num_iters, total_loss, src_loss_class_sum, W_dist,
                         src_loss_discriminator, mimic_loss))
                 for k in range(self.data_loader.num_src_domain):
                     print('src_loss_class_{}: {:.3f} acc {:.2f}'.format(k, src_loss_class_lst[k], src_acc_lst[k] * 100))
@@ -645,11 +642,9 @@ class MOST():
                 elif it + 1 == self.phase1_iters or it + 1 == self.num_iters:
                     self.save_trained_model(saver, it + 1)
                 if it >= self.phase1_iters and (it + 1) % (self.num_iters // 50) == 0:
-                    # Save acc values
                     self.save_value(step=it + 1)
 
     def save_trained_model(self, saver, step):
-        # Save model
         checkpoint_path = os.path.join(model_dir(), self.model_name, "saved-model",
                                        "{}".format(self.current_time))
         checkpoint_path = os.path.join(checkpoint_path, "mdaot_" + self.current_time + ".ckpt")

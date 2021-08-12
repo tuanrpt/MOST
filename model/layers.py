@@ -3,7 +3,7 @@
 
 import tensorflow as tf
 from tensorflow.contrib.framework import add_arg_scope
-from tensorbayes.tfutils import softmax_cross_entropy_with_two_logits as softmax_x_entropy_two
+
 
 @add_arg_scope
 def noise(x, std, phase, scope=None, reuse=None):

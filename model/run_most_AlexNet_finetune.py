@@ -5,9 +5,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from most import MOST
+from most_AlexNet_finetune import MOST
+
 from layers import noise
-from test_da_template import main_func, resolve_conflict_params
+from test_da_template_AlexNet_finetune import main_func, resolve_conflict_params
+
 from tensorflow.python.layers.core import dropout
 from tensorbayes.layers import dense, conv2d, avg_pool, max_pool
 
@@ -18,6 +20,7 @@ import signal
 import sys
 import time
 import datetime
+from pprint import pprint
 
 choice_default = 1
 warnings.simplefilter("ignore", category=DeprecationWarning)
@@ -26,22 +29,11 @@ model_name = "MOST-results"
 current_time = tuid()
 
 
-# generator
 def encode_layout(preprocess, training_phase=True, cnn_size='large'):
     layout = []
     if cnn_size == 'small':
         layout = [
-            (preprocess, (), {}),
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (max_pool, (2, 2), {}),
-            (dropout, (), dict(training=training_phase)),
-            (noise, (1,), dict(phase=training_phase)),
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (max_pool, (2, 2), {}),
+            (dense, (256,), {}),
             (dropout, (), dict(training=training_phase)),
             (noise, (1,), dict(phase=training_phase)),
         ]
@@ -64,15 +56,10 @@ def encode_layout(preprocess, training_phase=True, cnn_size='large'):
     return layout
 
 
-# classifier
 def class_discriminator_layout(num_classes=None, global_pool=True, activation=None, cnn_size='large'):
     layout = []
     if cnn_size == 'small':
         layout = [
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (conv2d, (64, 3, 1), {}),
-            (avg_pool, (), dict(global_pool=global_pool)),
             (dense, (num_classes,), dict(activation=activation))
         ]
 
@@ -87,10 +74,8 @@ def class_discriminator_layout(num_classes=None, global_pool=True, activation=No
     return layout
 
 
-# discriminator
 def domain_layout(c):
     layout = [
-        (dense, (100,), {}),
         (dense, (c,), dict(activation=None))
     ]
     return layout
@@ -98,7 +83,6 @@ def domain_layout(c):
 
 def phi_layout(c):
     layout = [
-        (dense, (100,), {}),
         (dense, (c,), dict(activation=None))
     ]
     return layout
@@ -114,18 +98,15 @@ def create_obj_func(params):
         }
     else:
         default_params = {
-            'batch_size': 200,
-            'learning_rate': 0.0002,
+            'batch_size': 128,
+            'learning_rate': 1e-4,
             'num_iters': 80000,
-            'phase1_iters': 20000,
             'src_class_trade_off': 1.0,
-            'src_domain_trade_off': '1.0,1.0,1.0,1.0',
+            'src_domain_trade_off': '1.0,1.0',
             'ot_trade_off': 0.1,
-            'domain_trade_off': 1.0,
-            'trg_vat_troff': 0.1,
-            'trg_ent_troff': 0.1,
+            'domain_trade_off': 0.1,
+            'src_vat_trade_off': 1.0,
             'g_network_trade_off': 1.0,
-            'mimic_trade_off': 1.0,
             'theta': 10.0,
             'mdaot_model_id': '',
             'classify_layout': class_discriminator_layout,
@@ -133,18 +114,25 @@ def create_obj_func(params):
             'domain_layout': domain_layout,
             'phi_layout': phi_layout,
             'log_path': os.path.join(model_dir(), model_name, "logs", "{}".format(current_time)),
-            'summary_freq': 800,
+            'summary_freq': 400,
             'current_time': current_time,
             'inorm': True,
-            'cast_data': True,
+            'cast_data': False,
             'only_save_final_model': True,
-            'cnn_size': 'small',
+            'cnn_size': 'large',
             'sample_size': 20,
             'data_shift_troff': 10.0,
-            'lbl_shift_troff': 1.0
+            'num_classes': 10,
+            'multi_scale': '',
+            'resnet_depth': 101,
+            'train_layers': 'fc7,fc6'
         }
 
     default_params = resolve_conflict_params(params, default_params)
+
+    print('Default parameters:')
+    pprint(default_params)
+
     learner = MOST(
         **params,
         **default_params,
@@ -158,11 +146,7 @@ def main_test(run_exp=False):
         choice_default=choice_default,
         src_name_default='mnist32_60_10',
         trg_name_default='mnistm32_60_10',
-        run_exp=run_exp,
-        freq_predict_display=10,
-        summary_freq=100,
-        current_time=current_time,
-        log_path=os.path.join(model_dir(), model_name, "logs", "{}".format(current_time))
+        run_exp=run_exp
     )
 
 

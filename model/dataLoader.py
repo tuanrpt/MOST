@@ -5,13 +5,8 @@ import os
 
 import numpy as np
 from scipy.io import loadmat
-from scipy import misc
-import cv2
-import time
-import h5py
 from keras.utils.np_utils import to_categorical
 from generic_utils import random_seed
-import csv
 
 
 def load_mat_file_single_label(filename):
@@ -26,6 +21,13 @@ def load_mat_file_single_label(filename):
             y = np.argmax(y, axis=1)
     elif len(y.shape) > 1:
         y = np.argmax(y, axis=1)
+    return x, y
+
+
+def load_mat_office31_AlexNet(filename):
+    data = loadmat(filename)
+    x = data['feas']
+    y = data['labels'][0]
     return x, y
 
 
@@ -45,7 +47,7 @@ def u2t(x):
 
 
 class DataLoader:
-    def __init__(self, src_domain=['mnistm'], trg_domain=['mnist'], data_path='./dataset', data_format='mat',
+    def __init__(self, src_domain=['mnistm'], trg_domain=['mnist'], data_path='./data', data_format='mat',
                  shuffle_data=False, dataset_name='digits', cast_data=True):
         self.num_src_domain = len(src_domain.split(','))
         self.src_domain_name = src_domain
@@ -88,6 +90,8 @@ class DataLoader:
             if os.path.isfile(file_path_train):
                 if self.dataset_name == 'digits':
                     x_train, y_train = load_mat_file_single_label(file_path_train)
+                elif self.dataset_name == 'office31_AlexNet_feat':
+                    x_train, y_train = load_mat_office31_AlexNet(file_path_train)
                 if shuffle_data:
                     x_train, y_train = self.shuffle(x_train, y_train)
                 if 'mnist32_60_10' not in s_n and self.cast_data:

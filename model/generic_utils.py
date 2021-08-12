@@ -16,10 +16,16 @@ def model_dir():
     cur_dir = Path(os.path.abspath(__file__))
     return str(cur_dir.parent.parent)
 
+
+def feat_dir():
+    cur_dir = Path(os.path.abspath(__file__))
+    par_dir = cur_dir.parent.parent
+    return str(par_dir / "features")
+
 def data_dir():
     cur_dir = Path(os.path.abspath(__file__))
     par_dir = cur_dir.parent.parent
-    return str(par_dir / "datasets")
+    return str(par_dir / "data")
 
 
 def random_seed():

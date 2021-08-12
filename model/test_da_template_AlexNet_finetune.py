@@ -7,15 +7,15 @@ from __future__ import absolute_import
 
 import os
 import sys
-from scipy.io import loadmat
 import numpy as np
 import tensorflow as tf
+
 from generic_utils import random_seed
 from generic_utils import data_dir
-from dataLoader import DataLoader
+from resnet.preprocessor import BatchPreprocessor
 
 
-def test_real_dataset(create_obj_func, src_name=None, trg_name=None, show=False, block_figure_on_end=False):
+def test_real_dataset(create_obj_func, src_name=None, trg_name=None):
     print('Running {} ...'.format(os.path.basename(__file__)))
 
     if src_name is None:
@@ -34,6 +34,7 @@ def test_real_dataset(create_obj_func, src_name=None, trg_name=None, show=False,
     tf.reset_default_graph()
 
     print("========== Test on real data ==========")
+
     users_params = dict()
     users_params = parse_arguments(users_params)
     data_format = 'mat'
@@ -41,22 +42,45 @@ def test_real_dataset(create_obj_func, src_name=None, trg_name=None, show=False,
     if 'format' in users_params:
         data_format, users_params = extract_param('format', data_format, users_params)
 
-    data_loader = DataLoader(src_domain=src_name,
-                             trg_domain=trg_name,
-                             data_path=data_dir(),
-                             data_format=data_format,
-                             cast_data=users_params['cast_data'])
+    src_domains = src_name.split(',')
+    num_src_domain = len(src_domains)
+    input_size = [227, 227]
+    n_channels = 3
+    src_preprocessors = []
+    dataset_path = os.path.join(data_dir(), 'office31')
+    multi_scale = list(map(int, users_params['multi_scale'].split(',')))
 
-    assert users_params['batch_size'] % data_loader.num_src_domain == 0
+    for src_domain in src_domains:
+        file_path_train = os.path.join(dataset_path, '{}_train.txt'.format(src_domain))
+        src_preprocessor_i = BatchPreprocessor(dataset_file_path=file_path_train,
+                                                 num_classes=users_params['num_classes'],
+                                                 output_size=input_size, horizontal_flip=True, shuffle=True,
+                                                 multi_scale=multi_scale)
+        src_preprocessors.append(src_preprocessor_i)
+
+    trg_train_preprocessor = BatchPreprocessor(dataset_file_path=os.path.join(dataset_path, '{}_train.txt'.format(trg_name)),
+                                         num_classes=users_params['num_classes'], output_size=input_size, horizontal_flip=True, shuffle=True,
+                                               multi_scale=multi_scale)
+
+    trg_test_preprocessor = BatchPreprocessor(dataset_file_path=os.path.join(dataset_path, '{}_test.txt'.format(trg_name)),
+                                         num_classes=users_params['num_classes'], output_size=input_size)
+
+    assert users_params['batch_size'] % num_src_domain == 0
+
     print('users_params:', users_params)
+    print('src_name:', src_name, ', trg_name:', trg_name)
+    for i in range(len(src_domains)):
+        print(src_domains[i], len(src_preprocessors[i].labels))
+    print(trg_name, len(trg_test_preprocessor.labels))
 
     learner = create_obj_func(users_params)
-    learner.dim_src = data_loader.data_shape
-    learner.dim_trg = data_loader.data_shape
+    learner.dim_src = tuple(input_size + [n_channels])
+    learner.dim_trg = tuple(input_size + [n_channels])
 
-    learner.x_trg_test = data_loader.trg_test[0][0]
-    learner.y_trg_test = data_loader.trg_test[0][1]
-    learner._init(data_loader)
+    print("dim_src:", tuple(input_size + [n_channels]))
+    print("dim_trg:", tuple(input_size + [n_channels]))
+
+    learner._init(src_preprocessors, trg_train_preprocessor, trg_test_preprocessor, num_src_domain)
     learner._build_model()
     learner._fit_loop()
 
@@ -66,9 +90,7 @@ def main_func(
         choice_default=0,
         src_name_default='svmguide1',
         trg_name_default='svmguide1',
-        run_exp=False,
-        keep_vars=[],
-        **kwargs):
+        run_exp=False):
 
     if not run_exp:
         choice_lst = [0, 1, 2]
@@ -85,9 +107,10 @@ def main_func(
 
     for choice in choice_lst:
         if choice == 0:
-            pass  # for synthetic data if possible
+            pass
+            # add another function here
         elif choice == 1:
-            test_real_dataset(create_obj_func, src_name, trg_name, show=False, block_figure_on_end=run_exp)
+            test_real_dataset(create_obj_func, src_name, trg_name)
 
 
 def parse_arguments(params, as_array=False):
@@ -147,25 +170,3 @@ def dict2string(params):
         else:
             result += key + ': ' + str(value) + ', '
     return '{' + result[:-2] + '}'
-
-
-def load_mat_file_single_label(filename):
-    filename_list = ['mnist', 'stl32', 'synsign', 'gtsrb', 'cifar32', 'usps32']
-    data = loadmat(filename)
-    x = data['X']
-    y = data['y']
-    if any(fn in filename for fn in filename_list):
-        if 'mnist32_60_10' not in filename and 'mnistg' not in filename:
-            y = y[0]
-        else:
-            y = np.argmax(y, axis=1)
-    # process one-hot label encoder
-    elif len(y.shape) > 1:
-        y = np.argmax(y, axis=1)
-    return x, y
-
-
-def u2t(x):
-    """Convert uint8 to [-1, 1] float
-    """
-    return x.astype('float32') / 255 * 2 - 1
