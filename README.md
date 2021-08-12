@@ -4,21 +4,21 @@ This is the implementation of paper **[MOST: Multi-Source Domain Adaptation via 
 
 ## A. Setup
 
-##### **Install manually**
+#### **Install manually**
 
 ```
 Python Environment: >= 3.5
 Tensorflow: >= 1.9
 ```
 
-##### **Install automatically from YAML file**
+#### **Install automatically from YAML file**
 
 ```
 pip install --upgrade pip
 conda env create --file tf1.9py3.5.yml
 ```
 
-##### **Install *tensorbayes***
+#### **Install *tensorbayes***
 
 Please note that tensorbayes 0.4.0 is out of date. Please copy a newer version to the *env* folder (tf1.9py3.5) using **tensorbayes.tar**
 
@@ -70,7 +70,7 @@ python run_most_digits.py 1 "mnistm32_60_10,mnist32_60_10,usps32,svhn" syn32 for
 
 #### 2. Office-31
 
-##### Step 1: Train a shallow network using extracted features
+#### Step 1: Train a shallow network using extracted features
 
 Please download extracted features from AlexNet [here](https://drive.google.com/file/d/12EjGgvVdnXAHjqLfceUe1ZFrYkKKA8lp/view?usp=sharing) and save them to the *features* folder.
 
@@ -94,7 +94,7 @@ python run_most_AlexNet_train_feat.py 1 "dslr_AlexNet,webcam_AlexNet" amazon_Ale
 
 We will get a model which is saved in folder *MOST-results/saved-model* together with its unique id, or *LOG-ID* will be printed out at the end of training.
 
-##### Step 2: Finetune the entire model including AlexNet and the shallow network.
+#### Step 2: Finetune the entire model including AlexNet and the shallow network.
 
 Some mini-steps should be taken for [finetuning](https://github.com/dgurkaynak/tensorflow-cnn-finetune). 
 
@@ -128,7 +128,7 @@ python run_most_AlexNet_finetune.py 1 "dslr,webcam" amazon format mat num_iters 
 
 ## C. Results
 
-##### Table 1: Classification accuracy (%) on Digits-five.
+#### Table 1: Classification accuracy (%) on Digits-five.
 
 |     Methods     | &#8594; mm | &#8594; mt | &#8594; us | &#8594; sv | &#8594; sy |   Avg    |
 | :-------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :------: |
@@ -139,7 +139,7 @@ python run_most_AlexNet_finetune.py 1 "dslr,webcam" amazon format mat num_iters 
 |  LtC-MSDA [5]   |    85.6    |    99.0    |    98.3    |    83.2    |    93.0    |   91.8   |
 | **MOST** (ours) |  **91.5**  |  **99.6**  |  **98.4**  |  **90.9**  |  **96.4**  | **95.4** |
 
-##### Table 2: Classification accuracy (%) on Office-31 using pretrained AlexNet.
+#### Table 2: Classification accuracy (%) on Office-31 using pretrained AlexNet.
 
 |     Methods     | &#8594; D | &#8594; W | &#8594; A |   Avg    |
 | :-------------: | :-------: | :-------: | :-------: | :------: |
@@ -174,7 +174,7 @@ If our code is helpful for your research, please cite our paper
 - [4] S. Zhao, G. Wang, S. Zhang, Y. Gu, Y. Li, Z. Song, P. Xu, R. Hu, H. Chai, and K. Keutzer. Multi-source distilling domain adaptation. In The Thirty-Fourth AAAI Conference on Artificial Intelligence, AAAI 2020, The Thirty-Second Innovative Applications of Artificial Intelligence Conference, IAAI 2020, The Tenth AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI 2020, New York, NY, USA, February 7-12, 2020, pages 12975-12983. AAAI Press, 2020.
 - [5] H. Wang, M. Xu, B. Ni, and W. Zhang. Learning to combine: Knowledge aggregation for multisource domain adaptation. In Computer Vision - ECCV, 2020.
 
-#### Codes: 
+#### GitHub repositories: 
 
 - Folders *alexnet* and *resnet* are cloned from [Deniz Gurkaynak’s repository](https://github.com/dgurkaynak/tensorflow-cnn-finetune.git) 
-- Some parts of our code (e.g., VAT, evaluation, …) are modified from [DIRT-T](https://github.com/RuiShu/dirt-t).
+- Some parts of our code (e.g., VAT, evaluation, …) are rewritten with modifications from [DIRT-T](https://github.com/RuiShu/dirt-t).
