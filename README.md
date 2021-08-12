@@ -106,7 +106,7 @@ Some mini-steps should be taken for [finetuning](https://github.com/dgurkaynak/t
   wget http://www.cs.toronto.edu/~guerzhoy/tf_alexnet/bvlc_alexnet.npy
   ```
 
-Finally, please use your model id which is saved at Step 1 and replace *<your_model_id>* in the following scripts.  The model id is a string ID based on the time of running model at Step 1. It should be, for example, “2020-10-07_02.30.5748”.
+Finally, please use your model id which is saved at Step 1 and replace *<your_model_id>* in the following scripts.  The model id is a string ID based on the time of running model at Step 1. It should be, for example, “2021-10-07_02.30.5748”.
 
 1. ''&#8594; **D**'' task
 
