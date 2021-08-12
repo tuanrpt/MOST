@@ -1,26 +1,24 @@
 # MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning
 
-This is the implementation of **Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning** (MOST) model which was accepted at UAI 2021.
+This is the implementation of **[MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning](https://auai.org/uai2021/pdf/uai2021.106.pdf)** model which has been accepted at UAI 2021.
 
-## Setup
+## A. Setup
 
-### Install Package Dependencies
-
-**Install manually**
+##### **Install manually**
 
 ```
 Python Environment: >= 3.5
 Tensorflow: >= 1.9
 ```
 
-**Install automatically from YAML file**
+##### **Install automatically from YAML file**
 
 ```
 pip install --upgrade pip
 conda env create --file tf1.9py3.5.yml
 ```
 
-**[UPDATE] Install tensorbayes**
+##### **Install *tensorbayes***
 
 Please note that tensorbayes 0.4.0 is out of date. Please copy a newer version to the *env* folder (tf1.9py3.5) using **tensorbayes.tar**
 
@@ -30,9 +28,9 @@ tar -xvf tensorbayes.tar
 cp -rf /tensorbayes/* /opt/conda/envs/tf1.9py3.5/lib/python3.5/site-packages/tensorbayes/
 ```
 
-## Training
+## B. Training
 
-#### Digits-five
+#### 1. Digits-five
 
 We first navigate to *model* folder, and then run *run_most.py* file as bellow:
 
@@ -70,9 +68,9 @@ python run_most_digits.py 1 "mnistm32_60_10,mnist32_60_10,usps32,syn32" svhn for
 python run_most_digits.py 1 "mnistm32_60_10,mnist32_60_10,usps32,svhn" syn32 format mat num_iters 80000 phase1_iters 0 summary_freq 800 learning_rate 0.0002 batch_size 200 src_class_trade_off 1.0 src_domain_trade_off "1.0,1.0,1.0,1.0" ot_trade_off 0.1 domain_trade_off 1.0 trg_vat_troff 0.1 trg_ent_troff 0.0 data_shift_troff 10.0 mimic_trade_off 1.0 cast_data True cnn_size small theta 0.1 sample_size 5
 ```
 
-#### Office-31
+#### 2. Office-31
 
-###### Step 1: Train a shallow network using extracted features
+##### Step 1: Train a shallow network using extracted features
 
 Please download extracted features from AlexNet [here](https://drive.google.com/file/d/12EjGgvVdnXAHjqLfceUe1ZFrYkKKA8lp/view?usp=sharing) and save them to the *features* folder.
 
@@ -96,7 +94,7 @@ python run_most_AlexNet_train_feat.py 1 "dslr_AlexNet,webcam_AlexNet" amazon_Ale
 
 We will get a model which is saved in folder *MOST-results/saved-model* together with its unique id, or *LOG-ID* will be printed out at the end of training.
 
-###### Step 2: Finetune the entire model including AlexNet and the shallow network.
+##### Step 2: Finetune the entire model including AlexNet and the shallow network.
 
 Some mini-steps should be taken for [finetuning](https://github.com/dgurkaynak/tensorflow-cnn-finetune). 
 
@@ -128,9 +126,9 @@ python run_most_AlexNet_finetune.py 1 "amazon,dslr" webcam format mat num_iters 
 python run_most_AlexNet_finetune.py 1 "dslr,webcam" amazon format mat num_iters 5000 summary_freq 50 learning_rate 0.0001 inorm True batch_size 62 src_class_trade_off 1.0 src_domain_trade_off "1.0,1.0" ot_trade_off 0.1 domain_trade_off 1.0 src_vat_trade_off 0.0 trg_vat_troff 0.1 trg_ent_troff 0.1 data_shift_troff 10.0 mimic_trade_off 0.1 cast_data False cnn_size small theta 0.1 g_network_trade_off 1.0 sample_size 1 num_classes 31 multi_scale "228,256" data_dir "" mdaot_model_id <your_model_id> train_layers "fc7,fc6,conv5,conv4,conv3,conv2,conv1"
 ```
 
-## Results
+## C. Results
 
-Table 1: Classification accuracy (%) on Digits-five.
+##### Table 1: Classification accuracy (%) on Digits-five.
 
 |     Methods     | &#8594; mm | &#8594; mt | &#8594; us | &#8594; sv | &#8594; sy |   Avg    |
 | :-------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :------: |
@@ -141,7 +139,7 @@ Table 1: Classification accuracy (%) on Digits-five.
 |  LtC-MSDA [5]   |    85.6    |    99.0    |    98.3    |    83.2    |    93.0    |   91.8   |
 | **MOST** (ours) |  **91.5**  |  **99.6**  |  **98.4**  |  **90.9**  |  **96.4**  | **95.4** |
 
-Table 2: Classification accuracy (%) on Office-31 using pretrained AlexNet.
+##### Table 2: Classification accuracy (%) on Office-31 using pretrained AlexNet.
 
 |     Methods     | &#8594; D | &#8594; W | &#8594; A |   Avg    |
 | :-------------: | :-------: | :-------: | :-------: | :------: |
@@ -152,7 +150,7 @@ Table 2: Classification accuracy (%) on Office-31 using pretrained AlexNet.
 |  LtC-MSDA [5]   |   99.6    |   97.2    |   56.9    |   84.6   |
 | **MOST** (ours) |  **100**  | **98.7**  | **60.6**  | **86.4** |
 
-#### Citations
+## D. Citations
 
 If our code is helpful for your research, please cite our paper 
 
@@ -166,9 +164,9 @@ If our code is helpful for your research, please cite our paper
 }
 ```
 
-## References
+## E. References
 
-##### Baselines:
+#### Baselines:
 
 - [1] H. Zhao, S. Zhang, G. Wu, J. M. F. Moura, J. P. Costeira, and G. J Gordon. Adversarial multiple source domain adaptation. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. CesaBianchi, and R. Garnett, editors, Advances in Neural Information Processing Systems 31, pages 8559-8570. Curran Associates, Inc., 2018 .
 - [2] R. Xu, Z. Chen, W. Zuo, J. Yan, and L. Lin. Deep cocktail network: Multi-source unsupervised domain adaptation with category shift. In 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition, pages 3964-3973, 2018.
@@ -176,7 +174,7 @@ If our code is helpful for your research, please cite our paper
 - [4] S. Zhao, G. Wang, S. Zhang, Y. Gu, Y. Li, Z. Song, P. Xu, R. Hu, H. Chai, and K. Keutzer. Multi-source distilling domain adaptation. In The Thirty-Fourth AAAI Conference on Artificial Intelligence, AAAI 2020, The Thirty-Second Innovative Applications of Artificial Intelligence Conference, IAAI 2020, The Tenth AAAI Symposium on Educational Advances in Artificial Intelligence, EAAI 2020, New York, NY, USA, February 7-12, 2020, pages 12975-12983. AAAI Press, 2020.
 - [5] H. Wang, M. Xu, B. Ni, and W. Zhang. Learning to combine: Knowledge aggregation for multisource domain adaptation. In Computer Vision - ECCV, 2020.
 
-##### Codes: 
+#### Codes: 
 
 - Folders *alexnet* and *resnet* are cloned from [Deniz Gurkaynak’s repository](https://github.com/dgurkaynak/tensorflow-cnn-finetune.git) 
-- The code is partly based on [DIRT-T](https://github.com/RuiShu/dirt-t).
+- Some parts of our code (e.g., VAT, evaluation, …) are modified from [DIRT-T](https://github.com/RuiShu/dirt-t).
