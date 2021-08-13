@@ -77,9 +77,6 @@ def test_real_dataset(create_obj_func, src_name=None, trg_name=None):
     learner.dim_src = tuple(input_size + [n_channels])
     learner.dim_trg = tuple(input_size + [n_channels])
 
-    print("dim_src:", tuple(input_size + [n_channels]))
-    print("dim_trg:", tuple(input_size + [n_channels]))
-
     learner._init(src_preprocessors, trg_train_preprocessor, trg_test_preprocessor, num_src_domain)
     learner._build_model()
     learner._fit_loop()

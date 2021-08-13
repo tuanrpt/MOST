@@ -393,14 +393,16 @@ class MOST():
         self.x_src_mid_lst = []
         for i in range(self.num_src_domain):
             if i == 0:
-                x_src_mid_feat = self.alexNet.inference(self.x_src_lst[i], extract_feat=True)
+                x_src_mid_feat = tf.reshape(self.alexNet.inference(self.x_src_lst[i], extract_feat=True),
+                                            (-1, 8, 8, 64))
             else:
-                x_src_mid_feat = self.alexNet.inference(self.x_src_lst[i], reuse=True, extract_feat=True)
+                x_src_mid_feat = tf.reshape(self.alexNet.inference(self.x_src_lst[i], reuse=True, extract_feat=True),
+                                            (-1, 8, 8, 64))
 
             x_src_mid = self._build_source_middle(x_src_mid_feat, is_reused=i)
             self.x_src_mid_lst.append(x_src_mid)
 
-        self.x_trg_mid_feat = self.alexNet.inference(self.x_trg, reuse=True, extract_feat=True)
+        self.x_trg_mid_feat = tf.reshape(self.alexNet.inference(self.x_trg, reuse=True, extract_feat=True), (-1, 8, 8, 64))
         self.x_trg_mid = self._build_target_middle(self.x_trg_mid_feat, reuse=True)
 
         # <editor-fold desc="Classifier-logits">
@@ -613,8 +615,8 @@ class MOST():
                 h_mean_var_id = [0, 0]
 
                 for i in g_mean_var_id:
-                    mean = graph.get_tensor_by_name("generator/l{}/dense/bn/mean:0".format(i))
-                    var = graph.get_tensor_by_name("generator/l{}/dense/bn/var:0".format(i))
+                    mean = graph.get_tensor_by_name("generator/l{}/conv2d/bn/mean:0".format(i))
+                    var = graph.get_tensor_by_name("generator/l{}/conv2d/bn/var:0".format(i))
                     mean, var = sess.run([mean, var])
                     g_mean_var.append([mean, var])
 
@@ -625,8 +627,8 @@ class MOST():
                     h_mean_var.append([mean, var])
 
         for i in range(len(g_mean_var)):
-            mean = self.tf_graph.get_tensor_by_name("generator/l{}/dense/bn/mean:0".format(g_mean_var_id[i]))
-            var = self.tf_graph.get_tensor_by_name("generator/l{}/dense/bn/var:0".format(g_mean_var_id[i]))
+            mean = self.tf_graph.get_tensor_by_name("generator/l{}/conv2d/bn/mean:0".format(g_mean_var_id[i]))
+            var = self.tf_graph.get_tensor_by_name("generator/l{}/conv2d/bn/var:0".format(g_mean_var_id[i]))
             self.tf_session.run(tf.assign(mean, g_mean_var[i][0]))
             self.tf_session.run(tf.assign(var, g_mean_var[i][1]))
 

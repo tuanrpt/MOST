@@ -66,9 +66,6 @@ def test_real_dataset(create_obj_func, src_name=None, trg_name=None):
     learner.x_trg_test = data_loader.trg_test[0][0]
     learner.y_trg_test = data_loader.trg_test[0][1]
 
-    print("dim_src: (%d)" % (learner.dim_src[0]))
-    print("dim_trg: (%d)" % (learner.dim_trg[0]))
-
     learner._init(data_loader)
     learner._build_model()
     learner._fit_loop()

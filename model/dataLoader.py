@@ -26,7 +26,8 @@ def load_mat_file_single_label(filename):
 
 def load_mat_office31_AlexNet(filename):
     data = loadmat(filename)
-    x = data['feas']
+    # x = data['feas']
+    x = np.reshape(data['feas'], (-1, 8, 8, 64))
     y = data['labels'][0]
     return x, y
 

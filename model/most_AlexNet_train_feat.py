@@ -352,21 +352,21 @@ class MOST():
         self.x_src_lst = []
         self.y_src_lst = []
         for i in range(self.data_loader.num_src_domain):
-            x_src = tf.placeholder(dtype=tf.float32, shape=(None, 4096), name='x_src_{}_input'.format(i))
+            x_src = tf.placeholder(dtype=tf.float32, shape=(None, 8, 8, 64), name='x_src_{}_input'.format(i))
             y_src = tf.placeholder(dtype=tf.float32, shape=(None, self.num_classes),
                                         name='y_src_{}_input'.format(i))
 
             self.x_src_lst.append(x_src)
             self.y_src_lst.append(y_src)
 
-        self.x_trg = tf.placeholder(dtype=tf.float32, shape=(None, 4096), name='x_trg_input')
+        self.x_trg = tf.placeholder(dtype=tf.float32, shape=(None, 8, 8, 64), name='x_trg_input')
         self.y_trg = tf.placeholder(dtype=tf.float32, shape=(None, self.num_classes),
                                     name='y_trg_input')
         self.y_src_domain = tf.placeholder(dtype=tf.float32, shape=(None, self.data_loader.num_src_domain),
                                     name='y_src_domain_input')
 
         T = tb.utils.TensorDict(dict(
-            x_tmp=tf.placeholder(dtype=tf.float32, shape=(None, 4096)),
+            x_tmp=tf.placeholder(dtype=tf.float32, shape=(None, 8, 8, 64)),
             y_tmp=tf.placeholder(dtype=tf.float32, shape=(None, self.num_classes))
         ))
 

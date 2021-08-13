@@ -33,7 +33,8 @@ def encode_layout(preprocess, training_phase=True, cnn_size='large'):
     layout = []
     if cnn_size == 'small':
         layout = [
-            (dense, (256,), {}),
+            (conv2d, (64, 3, 1), {}),
+            (max_pool, (2, 2), {}),
             (dropout, (), dict(training=training_phase)),
             (noise, (1,), dict(phase=training_phase)),
         ]
