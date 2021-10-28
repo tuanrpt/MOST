@@ -1,6 +1,13 @@
+<p align="center">
+  <img src="images/logo.jpg" width="100"/>
+</p>
+
 # MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning
 
 This is the implementation of paper **[MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning](https://auai.org/uai2021/pdf/uai2021.106.pdf)** which has been accepted at UAI 2021.
+<p align="center">
+  <img src="images/framework.png"/>
+</p>
 
 ## A. Setup
 
