@@ -163,7 +163,7 @@ python run_most_AlexNet_finetune.py 1 "dslr,webcam" amazon format mat num_iters 
 
 ## D. Citations
 
-If our code is helpful for your research, please cite our paper 
+Please cite the paper if MOST is helpful for your research:
 
 ```
 @InProceedings{tuan2021most,
