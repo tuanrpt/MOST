@@ -2,7 +2,7 @@
   <img src="images/logo.jpg" width="100"/>
 </p>
 
-# Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning
+# MOST: Multi-Source Domain Adaptation via Optimal Transport for Student-Teacher Learning
 
 <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/tuanrpt/MOST?style=for-the-badge" height="25"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/tuanrpt/MOST?style=for-the-badge" height="25"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/tuanrpt/MOST?style=for-the-badge" height="25"><img alt="GitHub license" src="https://img.shields.io/github/license/tuanrpt/MOST?style=for-the-badge" height="25">
 
