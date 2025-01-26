@@ -51,7 +51,7 @@ cd model
 
 To run on *Digits-five* dataset, in the root folder, please create a new folder named *features*.  
 
-At the next step, user downloads *Digits-five* dataset [here]([https://drive.google.com/file/d/12dUT_xBfikgsjYI6w9FyAKvx1UIz-Ccg/view?usp=sharing](https://drive.google.com/file/d/1OpoPALgaMdOlkSkJDqf-JwEvRUkyDqkw/view?usp=sharing)) and place extracting files to the *features* folder.
+At the next step, user downloads *Digits-five* dataset [here](https://drive.google.com/file/d/1OpoPALgaMdOlkSkJDqf-JwEvRUkyDqkw/view?usp=sharing) and place extracting files to the *features* folder.
 
 1. "&#8594; **mm**'' task 
 
