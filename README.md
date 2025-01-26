@@ -83,7 +83,7 @@ python run_most_digits.py 1 "mnistm32_60_10,mnist32_60_10,usps32,svhn" syn32 for
 
 #### Step 1: Train a shallow network using extracted features
 
-Please download extracted features from AlexNet [here](https://drive.google.com/file/d/12EjGgvVdnXAHjqLfceUe1ZFrYkKKA8lp/view?usp=sharing) and save them to the *features* folder.
+Please download extracted features from AlexNet [here](https://drive.google.com/file/d/1dsrHn4S6lCmlTa4Eg4RAE5JRfZUIxR8G/view?usp=sharing) and save them to the *features* folder.
 
 1. ''&#8594; **D**'' task
 
